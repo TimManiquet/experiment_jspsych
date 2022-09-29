@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+</body>
+<script>
+    var ans_array = ['q', 's', 'd', 'f', 'j', 'k', 'l', 'm']
+    
+    var corr_keys = {
+        banana: ans_array[0],
+        firehydrant: ans_array[1],
+        bird: ans_array[2],
+        building: ans_array[3],
+        cat: ans_array[4],
+        bus: ans_array[5],
+        person: ans_array[6],
+        tree: ans_array[7]
+    }
+
+    var ans_array = [
+        { category: 'banana', key: ans_array[0]},
+        { category: 'firehydrant', key: ans_array[1]},
+        { category: 'bird', key: ans_array[2]},
+        { category: 'building', key: ans_array[3]},
+        { category: 'cat', key: ans_array[4]},
+        { category: 'bus', key: ans_array[5]},
+        { category: 'person', key: ans_array[6]},
+        { category: 'tree', key: ans_array[7]}
+    ]
+
+    var yes = "banana"
+    console.log(ans_array.find(x => x.key === 'd').category)
+    // console.log(ans_array.find(x => x.category === yes).key)
+    // console.log(ans_array[ans_array.category === 'cat'])
+    // console.log(ans_array.category)
+
+
+    // <div> <img src={"model_img/model_${yes}"}/> </div>
+
+
+</script>
+</html>
