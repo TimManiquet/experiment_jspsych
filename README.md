@@ -1,2 +1,2 @@
-# jspsych_task
+# experiment_jspsych
 Categorisation task written with JsPsych.
