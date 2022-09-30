@@ -83,7 +83,7 @@
     ]
 
 
-////////////////////////////////////////////////////////////////////////////// EGINNING OF KEYBOARD SELECTION
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF KEYBOARD SELECTION
     // Ask the participant to declare the keyboard they're using
     var keyboard_selection = {
         type: jsPsychSurvey,
@@ -325,7 +325,7 @@
         type: jsPsychInstructions,
         pages: [
             "<p> The training is now over. When you are ready, press the button to start the main task.</p>" +
-            "<p> The task contains … blocks of … trials and should take approximately … minutes in total. You will be able to take breaks in between blocks.</p>" + 
+            "<p> The task contains 5 blocks of 80 trials and should take approximately … minutes in total. You will be able to take breaks in between blocks.</p>" + 
             "<p> <b><i>Good luck!</i></b></p>"
             ],
         button_label_next: "Start main task",
@@ -342,11 +342,18 @@
     var trial_count = 0
 
     var break_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-        <p> Take a short break. Press <b>C</b> to continue. </p>
-        `,
-        choices: 'c'
+        type: jsPsychInstructions,
+        pages: [
+            function(){
+                return(
+                    "<p> You have finished <b>" + trial_count + "</b> trials out of 400.</p>" +
+                    "<p>Take a break and press <i>'Continue'</i> when you're ready.</p>"
+                )
+            }
+        ],
+        button_label_next: "Continue",
+        allow_backward: false,
+        show_clickable_nav: true
     }
 
     var break_conditional = {
@@ -354,7 +361,7 @@
         conditional_function: function() {
             // increment trial count - in first run through the timeline variables procedure, trial_count will be equal to 1
             trial_count++;
-            if (trial_count % 10 == 0) {
+            if (trial_count % 80 == 0) {
             // if the trial count is divisible by 96, then run the break trial
             return true;
             } else {
@@ -442,8 +449,8 @@
     var classification_procedure = {
         timeline: [break_conditional, fixation, jitter, classification_trial],
         timeline_variables: img_stimuli,
-        // repetitions: 2,
-        randomize_order: true
+        randomize_order: true,
+        repetitions: 5
     };
 
     timeline.push(classification_procedure)

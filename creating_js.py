@@ -29,7 +29,7 @@ def csv_to_json(csvFilePath, jsonFilePath):
         jsonString = json.dumps(jsonArray, indent=4)
         jsonf.write(jsonString)
 
-files = glob.glob('./my_img/*.png')
+files = glob.glob('./task_img/*.png')
 
 filename = []
 category = []
