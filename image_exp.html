@@ -81,7 +81,9 @@
         { category: 'person', key: ans_array[6]},
         { category: 'tree', key: ans_array[7]}
     ]
-    
+
+
+////////////////////////////////////////////////////////////////////////////// EGINNING OF KEYBOARD SELECTION
     // Ask the participant to declare the keyboard they're using
     var keyboard_selection = {
         type: jsPsychSurvey,
@@ -124,7 +126,12 @@
         }
     };
     timeline.push(keyboard_selection)
+////////////////////////////////////////////////////////////////////////////// END OF KEYBOARD SELECTION
 
+
+
+
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF INSTRUCTIONS
     var instructions = {
         type: jsPsychInstructions,
         pages: ["<h4>Welcome!</h4>" + "The following pages will give you some instructions. Press <i>'Continue'</i> to proceed.",
@@ -188,22 +195,22 @@
                         '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
                         '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
                         '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
-                    '</div>',
-                    "We will start with some <b>training</b>. Use the next trials to get used to the task and be as performant as possible." + 
-                    ""
-                    );
-                }
+                    '</div>')},
+                    "<p>We will start with some <b>training</b>. Use the training trials to get used to the task and get as accurate as possible.</p>" + 
+                    "<p>During training, you will be provided with feedback about your responses (<b><i>correct</i></b>/<b><i>wrong</i></b>).</p>" +
+                    "<p>Note that this feedback won't be available during the rest of the experiment!</p>" +
+                    "<p>Press <i>'Continue'</i> to proceed to training.</p>"
             ],
         button_label_next: "Continue",
         button_label_previous: "Return",
         show_clickable_nav: true
     };
     timeline.push(instructions)
+////////////////////////////////////////////////////////////////////////////// END OF INSTRUCTIONS
 
 
 
-
-    ////////////////////////////////////////////////////////////////////////// START OF TRAINING
+////////////////////////////////////////////////////////////////////////////// START OF TRAINING
     var train_count_correct_trial = 0; // counting correct trials to stop training when performance is met
     
     var train_fixation = {
@@ -262,8 +269,7 @@
             }
         },
         data: {
-            trial_type: 'training',
-            task: 'response',
+            task: 'training',
             category: jsPsych.timelineVariable('train_category'),
             manipulation: jsPsych.timelineVariable('train_manipulation')
         },
@@ -275,7 +281,11 @@
         },
         on_finish: function(data){ //this function calculates online whether the answer is correct or not
             data.correct_response = corr_keys.find(x => x.category === jsPsych.timelineVariable('train_category')).key;
-            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);},
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            if (jsPsych.data.get().last(1).values()[0].correct) {
+                train_count_correct_trial +=1}
+            else {train_count_correct_trial = 0};
+        },
         trial_duration: 10000,
         stimulus_duration: 150
     };
@@ -294,7 +304,10 @@
             return "<p><b><i>Wrong.</i></b></p>"; // the parameter value has to be returned from the function
             }
         },
-        trial_duration: 400
+        trial_duration: 400,
+        on_finish: function(){
+            if (train_count_correct_trial > 4) {jsPsych.endCurrentTimeline()}
+        }
     };
     
     var training_procedure = {
@@ -304,12 +317,28 @@
     };
 
     timeline.push(training_procedure)
-    ////////////////////////////////////////////////////////////////////////// END OF TRAINING
+////////////////////////////////////////////////////////////////////////////// END OF TRAINING
+
+
+////////////////////////////////////////////////////////////////////////// BEGINNING OF INSTRUCTIONS BETWEEN TRAINING AND MAIN TASK
+    var interim_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            "<p> The training is now over. When you are ready, press the button to start the main task.</p>" +
+            "<p> The task contains … blocks of … trials and should take approximately … minutes in total. You will be able to take breaks in between blocks.</p>" + 
+            "<p> <b><i>Good luck!</i></b></p>"
+            ],
+        button_label_next: "Start main task",
+        allow_backward: false,
+        show_clickable_nav: true
+    };
+    timeline.push(interim_instructions)
+////////////////////////////////////////////////////////////////////////////// END OF INSTRUCTIONS BETWEEN TRAINING AND MAIN TASK
 
 
 
 
-    ////////////////////////////////////////////////////////////////////////// START OF MAIN TASK
+////////////////////////////////////////////////////////////////////////////// START OF MAIN TASK
     var trial_count = 0
 
     var break_trial = {
@@ -391,8 +420,7 @@
             }
         },
         data: {
-            trial_type: 'main_task',
-            task: 'response',
+            task: 'main_task',
             category: jsPsych.timelineVariable('category'),
             manipulation: jsPsych.timelineVariable('manipulation')
         },
