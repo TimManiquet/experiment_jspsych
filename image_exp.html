@@ -60,11 +60,10 @@
     //     imaegs: filename
     // }
 
-    // var preload = {
-    //     type: jsPsychPreload,
-    //     auto_preload: true
-    // };
-    // timeline.push(preload)
+    var preload = {
+        type: jsPsychPreload,
+        auto_preload: true
+    };
 
 
     // AT THE START: declare possible keys, answer array, and correct keys. these will be updated once the keyboard is chosen
@@ -91,7 +90,7 @@
         pages: [
             [
                 {
-                    type: 'multi-select',
+                    type: 'multi-choice',
                     prompt: `This will be used to assign response keys.`, 
                     name: 'KeyboardSelection', 
                     options: ['AZERTY', 'QWERTY'], 
@@ -100,8 +99,8 @@
                 }
             ]
         ],
-        title: "Please indicate the keyboard configuration you will be using during this experiment.",
-        button_label_finish: 'Continue to the experiment',
+        title: "Please indicate the type of keyboard you will be using during this experiment.",
+        button_label_finish: 'Continue',
         // update the answer keys & correct keys based on the participant answer IF QWERTY IS CHOSEN
         on_finish: function(data){
             if(jsPsych.data.getLastTrialData().values()[0].response.KeyboardSelection[0]==='QWERTY'){
@@ -177,42 +176,6 @@
 
     var instructions_2 = {
         type: jsPsychHtmlKeyboardResponse,
-        // stimulus: ["text here", ans_array[0]],
-        // stimulus:`
-        //     <p> Use the keyboard to classify images as fast as you can. Take some time to remember the keys and place your fingers. </p>
-        //     <p> Press the following keys to respond: </p>
-        //     <p style='text-align:center;'>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[0]}} </b> for <b>bananas</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[1]}} </b> for <b>fire hydrants</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[2]}} </b> for <b>birds</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[3]}} </b> for <b>buildings</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[4]}} </b> for <b>cats</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[5]}} </b> for <b>buses</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[6]}} </b> for <b>people</b>
-        //         <br>Press <b style="text-transform:uppercase;">${function(){return ans_array[7]}} </b> for <b>trees</b>
-        //     </p>
-        // <p> Note that the following reminder will be displayed at the bottom of the screen: </p>
-        // <div class="wrapper">
-        //     <div grid-area: 1><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[0]).category}.png' height='100'></div>
-        //     <div grid-area: 2><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[1]).category}.png' height='100'></div>
-        //     <div grid-area: 3><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[2]).category}.png' height='100'></div>
-        //     <div grid-area: 4><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[3]).category}.png' height='100'></div>
-        //     <div grid-area: 5><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[4]).category}.png' height='100'></div>
-        //     <div grid-area: 6><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[5]).category}.png' height='100'></div>
-        //     <div grid-area: 7><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[6]).category}.png' height='100'></div>
-        //     <div grid-area: 8><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[7]).category}.png' height='100'></div>
-        //     <div grid-area: 9;>${possible_keys[0]}</div>
-        //     <div grid-area: 10;>${possible_keys[1]}</div>
-        //     <div grid-area: 11;>${possible_keys[2]}</div>
-        //     <div grid-area: 12;>${possible_keys[3]}</div>
-        //     <div grid-area: 13;>${possible_keys[4]}</div>
-        //     <div grid-area: 14;>${possible_keys[5]}</div>
-        //     <div grid-area: 15;>${possible_keys[6]}</div>
-        //     <div grid-area: 16;>${possible_keys[7]}</div>
-        // </div>
-        // <br>
-        // <p><i>Press any key to begin the experiment</i>.</p>
-        // `,
         stimulus: function() {
             return(
             '<p> Use the keyboard to classify images as fast as you can. Take some time to remember the keys and place your fingers. </p>' + 
@@ -220,36 +183,36 @@
             '<img src="keyboard_' + jsPsych.data.get().values()[0].response.KeyboardSelection[0] + '.png" height="300">' + 
             '<p> Press the following keys to respond: </p>' + 
             '<p style="text-align:center;">' + 
-                '<br>Press ' + ans_array[0] + '</b> for <b>bananas</b>' + 
-                '<br>Press ' + ans_array[1] + '</b> for <b>fire hydrants</b>' + 
-                '<br>Press ' + ans_array[2] + '</b> for <b>birds</b>' + 
-                '<br>Press ' + ans_array[3] + '</b> for <b>buildings</b>' + 
-                '<br>Press ' + ans_array[4] + '</b> for <b>cats</b>' + 
-                '<br>Press ' + ans_array[5] + '</b> for <b>buses</b>' + 
-                '<br>Press ' + ans_array[6] + '</b> for <b>people</b>' + 
-                '<br>Press ' + ans_array[7] + '</b> for <b>trees</b>' + 
-            "</p>"
-        // <p> Note that the following reminder will be displayed at the bottom of the screen: </p>
-        // <div class="wrapper">
-            // <div grid-area: 1><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[0]).category}.png' height='100'></div>
-        //     <div grid-area: 2><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[1]).category}.png' height='100'></div>
-        //     <div grid-area: 3><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[2]).category}.png' height='100'></div>
-        //     <div grid-area: 4><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[3]).category}.png' height='100'></div>
-        //     <div grid-area: 5><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[4]).category}.png' height='100'></div>
-        //     <div grid-area: 6><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[5]).category}.png' height='100'></div>
-        //     <div grid-area: 7><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[6]).category}.png' height='100'></div>
-        //     <div grid-area: 8><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[7]).category}.png' height='100'></div>
-        //     <div grid-area: 9;>${possible_keys[0]}</div>
-        //     <div grid-area: 10;>${possible_keys[1]}</div>
-        //     <div grid-area: 11;>${possible_keys[2]}</div>
-        //     <div grid-area: 12;>${possible_keys[3]}</div>
-        //     <div grid-area: 13;>${possible_keys[4]}</div>
-        //     <div grid-area: 14;>${possible_keys[5]}</div>
-        //     <div grid-area: 15;>${possible_keys[6]}</div>
-        //     <div grid-area: 16;>${possible_keys[7]}</div>
-        // </div>
-        // <br>
-        // <p><i>Press any key to begin the experiment</i>.</p>
+                '<br>Press ' + possible_keys[0] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[0]).category + 
+                '<br>Press ' + possible_keys[1] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[1]).category + 
+                '<br>Press ' + possible_keys[2] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[2]).category + 
+                '<br>Press ' + possible_keys[3] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[3]).category + 
+                '<br>Press ' + possible_keys[4] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[4]).category + 
+                '<br>Press ' + possible_keys[5] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[5]).category + 
+                '<br>Press ' + possible_keys[6] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[6]).category + 
+                '<br>Press ' + possible_keys[7] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[7]).category + 
+            "</p>" + 
+        '<p> Note that the following reminder will be displayed at the bottom of the screen: </p>' +
+        '<div class="wrapper">' +
+            '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+            '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+            '<div grid-area: 3><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+            '<div grid-area: 4><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+            '<div grid-area: 5><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+            '<div grid-area: 6><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+            '<div grid-area: 7><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+            '<div grid-area: 8><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+            '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+            '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+            '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+            '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+            '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+            '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+            '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+            '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+        '</div>' +
+        '<br>' +
+        '<p><i>Press any key to begin the experiment</i>.</p>'
         );},
         post_trial_gap: 0
     };
@@ -304,25 +267,29 @@
     var classification_trial = {
         type: jsPsychImageKeyboardResponse,
         stimulus: jsPsych.timelineVariable('filename'),
-        prompt: `
-            <div class="wrapper">
-                <div grid-area: 1><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[0]).category}.png' height='100'></div>
-                <div grid-area: 2><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[1]).category}.png' height='100'></div>
-                <div grid-area: 3><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[2]).category}.png' height='100'></div>
-                <div grid-area: 4><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[3]).category}.png' height='100'></div>
-                <div grid-area: 5><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[4]).category}.png' height='100'></div>
-                <div grid-area: 6><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[5]).category}.png' height='100'></div>
-                <div grid-area: 7><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[6]).category}.png' height='100'></div>
-                <div grid-area: 8><img src='model_img/model_${corr_keys.find(x => x.key === possible_keys[7]).category}.png' height='100'></div>
-                <div grid-area: 9;>${possible_keys[0]}</div>
-                <div grid-area: 10;>${possible_keys[1]}</div>
-                <div grid-area: 11;>${possible_keys[2]}</div>
-                <div grid-area: 12;>${possible_keys[3]}</div>
-                <div grid-area: 13;>${possible_keys[4]}</div>
-                <div grid-area: 14;>${possible_keys[5]}</div>
-                <div grid-area: 15;>${possible_keys[6]}</div>
-                <div grid-area: 16;>${possible_keys[7]}</div>
-            </div>`,
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
         // choices: [ans_array[0], ans_array[1], ans_array[2], ans_array[3], ans_array[4], ans_array[5], ans_array[6], ans_array[7]],
         choices: function() {
             if(jsPsych.data.get().values()[0].response.KeyboardSelection[0] === 'AZERTY'){
@@ -335,6 +302,12 @@
             task: 'response',
             category: jsPsych.timelineVariable('category'),
             manipulation: jsPsych.timelineVariable('manipulation')
+        },
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 200);
         },
         on_finish: function(data){ //this function calculates online whether the answer is correct or not
             // data.correct_response = corr_keys[jsPsych.timelineVariable('category')];
