@@ -6,6 +6,8 @@
     <script src="img_stimuli.js"></script>
     <script src="shuffle_array.js"></script>  <!-- add the function that will shuffle correct answer-->
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-image-keyboard-response.js"></script> 
     <script src="jspsych/plugin-survey-multi-select.js"></script> 
     <script src="jspsych/plugin-survey.js"></script> 
@@ -55,11 +57,6 @@
 
     var timeline = [];
 
-    // var preload = {
-    //     type: jsPsychPreload,
-    //     imaegs: filename
-    // }
-
     var preload = {
         type: jsPsychPreload,
         auto_preload: true
@@ -83,7 +80,7 @@
         { category: 'person', key: ans_array[6]},
         { category: 'tree', key: ans_array[7]}
     ]
-
+    
     // Ask the participant to declare the keyboard they're using
     var keyboard_selection = {
         type: jsPsychSurvey,
@@ -103,7 +100,7 @@
         button_label_finish: 'Continue',
         // update the answer keys & correct keys based on the participant answer IF QWERTY IS CHOSEN
         on_finish: function(data){
-            if(jsPsych.data.getLastTrialData().values()[0].response.KeyboardSelection[0]==='QWERTY'){
+            if(jsPsych.data.getLastTrialData().values()[0].response.KeyboardSelection ==='QWERTY'){
                 possible_keys = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
                 // shuffle the array again
                 ans_array = shuffle([possible_keys[0],possible_keys[1],possible_keys[2],possible_keys[3],possible_keys[4],possible_keys[5],possible_keys[6],possible_keys[7]]);
@@ -127,52 +124,42 @@
     };
     timeline.push(keyboard_selection)
 
-    var welcome = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: "Welcome to this experiment. Press any key to begin.",
-        // stimulus: `
-        // Welcome!
-        // ${console.log(yes)}
-        // `,
-        post_trial_gap: 0
+    var instructions_pages = {
+        type: jsPsychInstructions,
+        pages: ["<h4>Welcome!</h4>" + "The following pages will give you some instructions. Press <i>'Continue'</i> to proceed.",
+                '<h2> <b> Welcome! </b> </h2>' +
+                '<p> In this experiment, you will have to classify pictures based on the object they contain.</p>' +
+                '<p> Indicate to which category the object in the image belongs to <em>as fast as possible</em>.</p>' +
+                '<p> Objects will belong to one of eight possible categories:' +
+                    '<br><b><i>People</i></b>' +
+                    '<br><b><i>Cats</i></b>' +
+                    '<br><b><i>Birds</i></b>' +
+                    '<br><b><i>Bananas</i></b>' +
+                    '<br><b><i>Fire hydrants</i></b>' +
+                    '<br><b><i>Buses</i></b>' +
+                    '<br><b><i>Buildings</i></b>' +
+                    '<br><b><i>Trees</i></b>' +
+                '</p>' +
+                '<p> Here are some example images from each category: </p>' +
+                '<div>' +
+                '<img src="my_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="my_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="my_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="my_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
+                '</div>' +
+                '<div>' +
+                    '<img src="my_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="my_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="my_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="my_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
+                '</div>' +
+                '<br><br>'
+            ],
+        button_label_next: "Continue",
+        button_label_previous: "Return",
+        show_clickable_nav: true
     };
-    timeline.push(welcome);
-
-    var instructions_1 = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-        <h2> <b> Welcome! </b> </h2>
-        <p> In this experiment, you will have to classify pictures based on the object they contain.</p>
-        <p> Indicate to which category the object in the image belongs to <em>as fast as possible</em>.</p>
-        <p> Objects will belong to one of eight possible categories:
-            <br><b><i>People</i></b>
-            <br><b><i>Cats</i></b>
-            <br><b><i>Birds</i></b>
-            <br><b><i>Bananas</i></b>
-            <br><b><i>Fire hydrants</i></b>
-            <br><b><i>Buses</i></b>
-            <br><b><i>Buildings</i></b>
-            <br><b><i>Trees</i></b>
-        </p>
-        <p> Here are some example images from each category: </p>
-        <div>
-         <img src="my_img/control_person1.png" alt="" height="150px" width="150px"/>
-         <img src="my_img/control_cat1.png" alt="" height="150px" width="150px"/>
-         <img src="my_img/control_bird1.png" alt="" height="150px" width="150px"/>
-        <img src="my_img/control_banana1.png" alt="" height="150px" width="150px"/>
-        </div>
-        <div>
-            <img src="my_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>
-            <img src="my_img/control_bus1.png" alt="" height="150px" width="150px"/>
-            <img src="my_img/control_building1.png" alt="" height="150px" width="150px"/>
-            <img src="my_img/control_tree1.png" alt="" height="150px" width="150px"/>
-        </div>
-        <br><br>
-        <p><i>Press any key to continue instructions.</i></p>
-        `,
-        post_trial_gap: 0
-    };
-    timeline.push(instructions_1)
+    timeline.push(instructions_pages)
 
     var instructions_2 = {
         type: jsPsychHtmlKeyboardResponse,
@@ -180,19 +167,19 @@
             return(
             '<p> Use the keyboard to classify images as fast as you can. Take some time to remember the keys and place your fingers. </p>' + 
             '<p> We will use eight keys that are easy to reach, see the coloured ones on the illustration below: </p>' + 
-            '<img src="keyboard_' + jsPsych.data.get().values()[0].response.KeyboardSelection[0] + '.png" height="300">' + 
-            '<p> Press the following keys to respond: </p>' + 
-            '<p style="text-align:center;">' + 
-                '<br>Press ' + possible_keys[0] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[0]).category + 
-                '<br>Press ' + possible_keys[1] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[1]).category + 
-                '<br>Press ' + possible_keys[2] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[2]).category + 
-                '<br>Press ' + possible_keys[3] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[3]).category + 
-                '<br>Press ' + possible_keys[4] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[4]).category + 
-                '<br>Press ' + possible_keys[5] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[5]).category + 
-                '<br>Press ' + possible_keys[6] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[6]).category + 
-                '<br>Press ' + possible_keys[7] + '</b> for ' +  corr_keys.find(x => x.key === possible_keys[7]).category + 
+            '<img src="keyboard_' + jsPsych.data.get().values()[0].response.KeyboardSelection + '.png" height="300">' + 
+            '<p style="text-align:center;"> Press the following keys to respond:' + 
+            // '<p style="text-align:center;">' + 
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[0] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[0]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[1] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[1]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[2] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[2]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[3] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[3]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[4] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[4]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[5] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[5]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[6] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[6]).category + '</b>' +
+                '<br>Press <b style="text-transform: uppercase";>' + possible_keys[7] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[7]).category + '</b>' +
             "</p>" + 
-        '<p> Note that the following reminder will be displayed at the bottom of the screen: </p>' +
+        '<p> To make it easier, the following reminder will be displayed at the bottom of the screen thoughout the experiment:' +
         '<div class="wrapper">' +
             '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
             '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
@@ -211,8 +198,7 @@
             '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
             '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
         '</div>' +
-        '<br>' +
-        '<p><i>Press any key to begin the experiment</i>.</p>'
+        '<i>Press any key to begin the experiment</i>.</p>'
         );},
         post_trial_gap: 0
     };
@@ -292,7 +278,7 @@
             )},
         // choices: [ans_array[0], ans_array[1], ans_array[2], ans_array[3], ans_array[4], ans_array[5], ans_array[6], ans_array[7]],
         choices: function() {
-            if(jsPsych.data.get().values()[0].response.KeyboardSelection[0] === 'AZERTY'){
+            if(jsPsych.data.get().values()[0].response.KeyboardSelection === 'AZERTY'){
                 return ['q', 's', 'd', 'f', 'j', 'k', 'l', 'm'];
             } else {
                 return ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
