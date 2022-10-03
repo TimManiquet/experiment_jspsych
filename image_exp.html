@@ -51,7 +51,7 @@
         on_finish: function(){
             jsPsych.data.displayData(); //this is useful for directly debugging, probably not for real
             jsPsych.data.addProperties({ID: id}); // add the date as a data ID
-            // jsPsych.data.get().localSave('csv', 'subject_' + id +'.csv'); // save data locally
+            jsPsych.data.get().localSave('csv', 'subject_' + id +'.csv'); // save data locally
         },
         
     });
@@ -150,16 +150,16 @@
                 '</p>' +
                 '<p> Here are some example images from each category: </p>' +
                 '<div>' +
-                '<img src="my_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="my_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="my_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="my_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
+                '<img src="40version_task_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="40version_task_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="40version_task_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="40version_task_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
                 '</div>' +
                 '<div>' +
-                    '<img src="my_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="my_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="my_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="my_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
+                    '<img src="40version_task_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="40version_task_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="40version_task_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="40version_task_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
                 '</div>' +
                 '<br><br>',
                 function() {
@@ -212,7 +212,7 @@
 
 ////////////////////////////////////////////////////////////////////////////// START OF TRAINING
     var train_count_correct_trial = 0; // counting correct trials to stop training when performance is met
-    
+
     var train_fixation = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: '+',
@@ -306,7 +306,10 @@
         },
         trial_duration: 400,
         on_finish: function(){
-            if (train_count_correct_trial > 4) {jsPsych.endCurrentTimeline()}
+            if (train_count_correct_trial > 1) {jsPsych.endCurrentTimeline()} // switch back to 4!!!
+        },
+        data: {
+            task:'training_feedback'
         }
     };
     
@@ -320,12 +323,13 @@
 ////////////////////////////////////////////////////////////////////////////// END OF TRAINING
 
 
+
 ////////////////////////////////////////////////////////////////////////// BEGINNING OF INSTRUCTIONS BETWEEN TRAINING AND MAIN TASK
     var interim_instructions = {
         type: jsPsychInstructions,
         pages: [
             "<p> The training is now over. When you are ready, press the button to start the main task.</p>" +
-            "<p> The task contains 5 blocks of 80 trials and should take approximately … minutes in total. You will be able to take breaks in between blocks.</p>" + 
+            "<p> The task contains 5 blocks of 80 trials and should take approximately 20 minutes in total. You will be able to take breaks in between blocks.</p>" + 
             "<p> <b><i>Good luck!</i></b></p>"
             ],
         button_label_next: "Start main task",
@@ -339,7 +343,8 @@
 
 
 ////////////////////////////////////////////////////////////////////////////// START OF MAIN TASK
-    var trial_count = 0
+    var trial_count = 0;
+    var block_count = 1; // counting the block number to append in the data
 
     var break_trial = {
         type: jsPsychInstructions,
@@ -353,20 +358,24 @@
         ],
         button_label_next: "Continue",
         allow_backward: false,
-        show_clickable_nav: true
-    }
+        show_clickable_nav: true,
+        data: {
+            task: 'break',
+        }
+    };
 
     var break_conditional = {
         timeline: [break_trial],
         conditional_function: function() {
             // increment trial count - in first run through the timeline variables procedure, trial_count will be equal to 1
             trial_count++;
-            if (trial_count % 80 == 0) {
-            // if the trial count is divisible by 96, then run the break trial
-            return true;
+            if (trial_count % 3 == 0) {
+                // if the trial count is divisible by x, then run the break trial
+                block_count +=1;
+                return true;
             } else {
-            // otherwise skip the break trial
-            return false;
+                // otherwise skip the break trial
+                return false;
             }
         }
     };
@@ -378,7 +387,10 @@
         trial_duration: 500,
         data: 'fixation',
         post_trial_gap: 0,
-        trial_duration:500
+        trial_duration:500,
+        data: {
+            task: 'fixation_cross',
+        }
     };
 
     // adding a randomly long blank interval before image presentation
@@ -389,7 +401,9 @@
         trial_duration: function(){
             return jsPsych.randomization.sampleWithoutReplacement([0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300], 1)[0];
         }, // this function picks up one duration value at random
-        data: 'fixation' // here we tag the fixation with a relevant name, useful to remove its data later
+        data: {
+            task:'fixation_jitter' // here we tag the fixation with a relevant name, useful to remove its data later
+         }
     };
 
     var classification_trial = {
@@ -441,6 +455,7 @@
             // data.correct_response = corr_keys[jsPsych.timelineVariable('category')];
             data.correct_response = corr_keys.find(x => x.category === jsPsych.timelineVariable('category')).key;
             data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            data.block_number = block_count;
         },
         trial_duration: 10000,
         stimulus_duration: 150
@@ -450,7 +465,7 @@
         timeline: [break_conditional, fixation, jitter, classification_trial],
         timeline_variables: img_stimuli,
         randomize_order: true,
-        repetitions: 5
+        repetitions: 1
     };
 
     timeline.push(classification_procedure)
@@ -461,7 +476,10 @@
         <p> Thank you for taking part, the experiment is now over!</p>
         <p> Press any key to finish.</p>
         `,
-        post_trial_gap: 500
+        post_trial_gap: 500,
+        data: {
+            task: 'end_message'
+        }
     };
     timeline.push(end_message);
 
