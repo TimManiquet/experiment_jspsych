@@ -2,3 +2,10 @@
 4version_img_stimuli.js
 40version_task_img
 creating_js.py
+categorisation_experiment.html
+img_stimuli.csv
+jspsych/*
+model_im.afphoto
+results.js
+train_img_stimuli.csv
+using_json.py
