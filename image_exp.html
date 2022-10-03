@@ -150,23 +150,23 @@
                 '</p>' +
                 '<p> Here are some example images from each category: </p>' +
                 '<div>' +
-                '<img src="40version_task_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="40version_task_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="40version_task_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                '<img src="40version_task_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
+                '<img src="instructions_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="instructions_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="instructions_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="instructions_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
                 '</div>' +
                 '<div>' +
-                    '<img src="40version_task_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="40version_task_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="40version_task_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
-                    '<img src="40version_task_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
+                    '<img src="instructions_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="instructions_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="instructions_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="instructions_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
                 '</div>' +
                 '<br><br>',
                 function() {
                     return(
                         '<p> Use the keyboard to classify images as fast as you can. Take some time to remember the keys and place your fingers. </p>' + 
                         '<p> We will use eight keys that are easy to reach, see the coloured ones on the illustration below: </p>' + 
-                        '<img src="keyboard_' + jsPsych.data.get().values()[0].response.KeyboardSelection + '.png" height="300">' + 
+                        '<img src="instructions_img/keyboard_' + jsPsych.data.get().values()[0].response.KeyboardSelection + '.png" height="300">' + 
                         '<p style="text-align:center;"> Press the following keys to respond:' + 
                             '<br>Press <b style="text-transform: uppercase";>' + possible_keys[0] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[0]).category + '</b>' +
                             '<br>Press <b style="text-transform: uppercase";>' + possible_keys[1] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[1]).category + '</b>' +
@@ -179,14 +179,14 @@
                         "</p>" + 
                     '<p> To make it easier, the following reminder will be displayed at the bottom of the screen thoughout the experiment:' +
                     '<div class="wrapper">' +
-                        '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 3><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 4><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 5><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 6><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 7><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
-                        '<div grid-area: 8><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 1><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 2><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 3><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 4><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 5><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 6><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 7><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                        '<div grid-area: 8><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
                         '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
                         '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
                         '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
@@ -242,14 +242,14 @@
                 // the class is for creating a nice 2x8 table layout with images and keys
                 // the ID is to hide the prompt at the start of trials
                 '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
-                    '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 3><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 4><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 5><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 6><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 7><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 8><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 1><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
                     '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
                     '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
                     '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
@@ -414,14 +414,14 @@
                 // the class is for creating a nice 2x8 table layout with images and keys
                 // the ID is to hide the prompt at the start of trials
                 '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
-                    '<div grid-area: 1><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 2><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 3><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 4><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 5><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 6><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 7><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
-                    '<div grid-area: 8><img src="model_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 1><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
                     '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
                     '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
                     '<div grid-area: 11;>' + possible_keys[2] + '</div>' +

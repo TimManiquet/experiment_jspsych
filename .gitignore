@@ -1,0 +1,6 @@
+$ cat .gitignore
+# exclude some files that shouldn't be online
+/Users/tim/Desktop/experiment_jspsych/4version_img_stimuli.js
+/Users/tim/Desktop/experiment_jspsych/40version_task_img
+/Users/tim/Desktop/experiment_jspsych/creating_js.py
+
