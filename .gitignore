@@ -9,3 +9,10 @@ model_im.afphoto
 results.js
 train_img_stimuli.csv
 using_json.py
+analysis.ipynb
+pandas.ipynb
+matplotlib.ipynb
+jspsych_exp_venv/*
+lib/*
+pyenv.cfg
+bin/*
