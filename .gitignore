@@ -16,3 +16,4 @@ jspsych_exp_venv/*
 lib/*
 pyenv.cfg
 bin/*
+online_version/*
