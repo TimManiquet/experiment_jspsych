@@ -48,9 +48,9 @@ for i in range(len(files)):
     # adding the name of the file to the list
     file = pathlib.Path(files[i])
     filenames.append("https://www.psytests.be/timages/" + str(file.parts[-2]) + '/' + file.name)
-    mask_filename = pathlib.Path(mask_files[i])
-    # filename.append("https://www.psytests.be/timages/" + str(file.parents[0]) + '/' + file.name)
-    mask_filenames.append(str(mask_filename.parts[-2]) + '/' + mask_filename.name)
+    # adding the name of the mask file to the list
+    mask_file = pathlib.Path(mask_files[i])
+    mask_filenames.append("https://www.psytests.be/timages/" + str(mask_file.parts[-2]) + '/' + mask_file.name)
 
     # adding the category and correct response
     if 'person' in str(file.name):
@@ -114,15 +114,14 @@ train_filenames = []
 train_mask_filenames = []
 train_category = []
 train_manipulation = []
-# correct_response = []
 
 for i in range(len(train_files)):
     # adding the name of the file to the list
     train_file = pathlib.Path(train_files[i])
     train_filenames.append("https://www.psytests.be/timages/" + str(train_file.parts[-2]) + '/' + train_file.name)
-    train_mask_filename = pathlib.Path(mask_files[i])
-    # filename.append("https://www.psytests.be/timages/" + str(file.parents[0]) + '/' + file.name)
-    train_mask_filenames.append(str(train_mask_filename.parts[-2]) + '/' + train_mask_filename.name)
+    # adding the name of the mask file to the list
+    train_mask_file = pathlib.Path(train_mask_files[i])
+    train_mask_filenames.append("https://www.psytests.be/timages/" + str(train_mask_file.parts[-2]) + '/' + train_mask_file.name)
 
     # adding the category and correct response
     if 'person' in str(train_file.name):

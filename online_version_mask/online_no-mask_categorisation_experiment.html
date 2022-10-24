@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="img_stimuli.js"></script>
+    <script src="train_img_stimuli.js"></script>
+    <script src="shuffle_array.js"></script>  <!-- add the function that will shuffle correct answer-->
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script>
+    <script src="jspsych/plugin-image-keyboard-response.js"></script> 
+    <script src="jspsych/plugin-survey-multi-select.js"></script> 
+    <script src="jspsych/plugin-survey.js"></script> 
+    <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych-psychophysics.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* adding the style to align model images at the bottom */
+        .div-wrapper { 
+            position: relative;
+            height: 200px;
+            width: 300px;
+        }
+        .div-wrapper img {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+        /* adding style to create a grid-like display of images and their corresponding keys */
+        .wrapper {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            grid-auto-rows: 100px;
+            grid-template-areas:
+                "1 2 3 4 5 6 7 8"
+                "9 10 11 12 13 14 15 16";
+            /* align-items: center; */
+            justify-items: center;
+        }
+    </style>
+  </head>
+  <body></body>
+  <script>
+
+
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF PREAMBLE
+    var id = Date.now() // create an idea for each run based on its time
+
+    const jsPsych = initJsPsych({
+        default_iti: 0,
+        // here we declare within the initialization that we want this function to run at the end
+        on_finish: function(){
+            jsPsych.data.displayData(); //this is useful for directly debugging, probably not for real
+            jsPsych.data.addProperties({ID: id}); // add the date as a data ID
+            jsPsych.data.get().localSave('csv', 'subject_' + id +'.csv'); // save data locally
+        },
+        
+    });
+
+    var timeline = [];
+////////////////////////////////////////////////////////////////////////////// END OF PREAMBLE
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF PRELOADING
+    // the list that will hold our file names to preload
+    var list_of_filenames = []
+
+    // append file names from the main task
+    for (let i = 0; i < img_stimuli.length; i++) {
+        list_of_filenames.push(img_stimuli[i].filename)
+        list_of_filenames.push(img_stimuli[i].mask_filename)
+    }
+    // append file names from the training
+    for (let i = 0; i < train_img_stimuli.length; i++) {
+        list_of_filenames.push(train_img_stimuli[i].train_filename);
+        list_of_filenames.push(train_img_stimuli[i].train_mask_filename)
+    }
+    // declare images used in the instructions and append them
+    var instructions_img = ['https://www.psytests.be/timages/instructions_img/keyboard_QWERTY.png',
+        'https://www.psytests.be/timages/instructions_img/model_building.png',
+        'https://www.psytests.be/timages/instructions_img/keyboard_AZERTY.png',
+        'https://www.psytests.be/timages/instructions_img/model_tree.png',
+        'https://www.psytests.be/timages/instructions_img/control_building1.png',
+        'https://www.psytests.be/timages/instructions_img/model_banana.png',
+        'https://www.psytests.be/timages/instructions_img/control_bus1.png',
+        'https://www.psytests.be/timages/instructions_img/model_firehydrant.png',
+        'https://www.psytests.be/timages/instructions_img/model_bus.png',
+        'https://www.psytests.be/timages/instructions_img/control_person1.png',
+        'https://www.psytests.be/timages/instructions_img/control_firehydrant1.png',
+        'https://www.psytests.be/timages/instructions_img/model_bird.png',
+        'https://www.psytests.be/timages/instructions_img/control_cat1.png',
+        'https://www.psytests.be/timages/instructions_img/control_bird1.png',
+        'https://www.psytests.be/timages/instructions_img/control_banana1.png',
+        'https://www.psytests.be/timages/instructions_img/model_cat.png',
+        'https://www.psytests.be/timages/instructions_img/model_person.png',
+        'https://www.psytests.be/timages/instructions_img/control_tree1.png']
+
+
+    for (let i = 0; i < instructions_img.length; i++) {
+        list_of_filenames.push(instructions_img[i])
+    }
+    var preload = {
+            type: jsPsychPreload,
+            images: list_of_filenames,
+            message: "<p> Experiment loading, please wait.</p>"
+        };
+    timeline.push(preload)
+
+////////////////////////////////////////////////////////////////////////////// END OF PRELOADING
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF KEYBOARD SELECTION
+    // AT THE START: declare possible keys, answer array, and correct keys. these will be updated once the keyboard is chosen
+    // NOTE: azerty is chosen by default. nothing changes if it is selected
+    // declaring possible keys
+    possible_keys = ['q', 's', 'd', 'f', 'j', 'k', 'l', 'm'];
+    // declaring answer array
+    ans_array = shuffle([possible_keys[0],possible_keys[1],possible_keys[2],possible_keys[3],possible_keys[4],possible_keys[5],possible_keys[6],possible_keys[7]]);
+    // declaring correct keys
+    var corr_keys = [
+        { category: 'banana', key: ans_array[0]},
+        { category: 'firehydrant', key: ans_array[1]},
+        { category: 'bird', key: ans_array[2]},
+        { category: 'building', key: ans_array[3]},
+        { category: 'cat', key: ans_array[4]},
+        { category: 'bus', key: ans_array[5]},
+        { category: 'person', key: ans_array[6]},
+        { category: 'tree', key: ans_array[7]}
+    ]
+    // Ask the participant to declare the keyboard they're using
+    var keyboard_selection = {
+        type: jsPsychSurvey,
+        pages: [
+            [
+                {
+                    type: 'multi-choice',
+                    prompt: `This will be used to assign response keys.`, 
+                    name: 'KeyboardSelection', 
+                    options: ['AZERTY', 'QWERTY'], 
+                    required: true,
+                    columns: 0,
+                }
+            ]
+        ],
+        title: "Please indicate the type of keyboard you will be using during this experiment.",
+        button_label_finish: 'Continue',
+        // update the answer keys & correct keys based on the participant answer IF QWERTY IS CHOSEN
+        on_finish: function(data){
+            if(jsPsych.data.getLastTrialData().values()[0].response.KeyboardSelection ==='QWERTY'){
+                possible_keys = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
+                // shuffle the array again
+                ans_array = shuffle([possible_keys[0],possible_keys[1],possible_keys[2],possible_keys[3],possible_keys[4],possible_keys[5],possible_keys[6],possible_keys[7]]);
+                corr_keys = [
+                    { category: 'banana', key: ans_array[0]},
+                    { category: 'firehydrant', key: ans_array[1]},
+                    { category: 'bird', key: ans_array[2]},
+                    { category: 'building', key: ans_array[3]},
+                    { category: 'cat', key: ans_array[4]},
+                    { category: 'bus', key: ans_array[5]},
+                    { category: 'person', key: ans_array[6]},
+                    { category: 'tree', key: ans_array[7]}
+                ];
+            }
+        },
+        data: {
+            possible_keys: function(){return possible_keys},
+            ans_array: function(){return ans_array},
+            corr_keys: function(){return corr_keys}
+        }
+    };
+    timeline.push(keyboard_selection)
+////////////////////////////////////////////////////////////////////////////// END OF KEYBOARD SELECTION
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// BEGINNING OF INSTRUCTIONS
+    var instructions = {
+        type: jsPsychInstructions,
+        pages: ["<h4>Welcome!</h4>" + "The following pages will give you some instructions. Press <i>'Continue'</i> to proceed.",
+                '<h2> <b> Welcome! </b> </h2>' +
+                '<p> In this experiment, you will have to classify pictures based on the object they contain.</p>' +
+                '<p> Indicate to which category the object in the image belongs to <em>as fast as possible</em>.</p>' +
+                '<p> Objects will belong to one of eight possible categories:' +
+                    '<br><b><i>People</i></b>' +
+                    '<br><b><i>Cats</i></b>' +
+                    '<br><b><i>Birds</i></b>' +
+                    '<br><b><i>Bananas</i></b>' +
+                    '<br><b><i>Fire hydrants</i></b>' +
+                    '<br><b><i>Buses</i></b>' +
+                    '<br><b><i>Buildings</i></b>' +
+                    '<br><b><i>Trees</i></b>' +
+                '</p>' +
+                '<p> Here are some example images from each category: </p>' +
+                '<div>' +
+                '<img src="https://www.psytests.be/timages/instructions_img/control_person1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="https://www.psytests.be/timages/instructions_img/control_cat1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="https://www.psytests.be/timages/instructions_img/control_bird1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                '<img src="https://www.psytests.be/timages/instructions_img/control_banana1.png" alt="" height="150px" width="150px"/>' +
+                '</div>' +
+                '<div>' +
+                    '<img src="https://www.psytests.be/timages/instructions_img/control_firehydrant1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="https://www.psytests.be/timages/instructions_img/control_bus1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="https://www.psytests.be/timages/instructions_img/control_building1.png" alt="" height="150px" width="150px"/>' + "&nbsp;" +
+                    '<img src="https://www.psytests.be/timages/instructions_img/control_tree1.png" alt="" height="150px" width="150px"/>' +
+                '</div>' +
+                '<br><br>',
+                function() {
+                    return(
+                        '<p> Use the keyboard to classify images as fast as you can. Take some time to remember the keys and place your fingers. </p>' + 
+                        '<p> We will use eight keys that are easy to reach, see the coloured ones on the illustration below: </p>' + 
+                        '<img src="https://www.psytests.be/timages/instructions_img/keyboard_' + jsPsych.data.get().values()[1].response.KeyboardSelection + '.png" height="300">' + 
+                        '<p style="text-align:center;"> Press the following keys to respond:' + 
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[0] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[0]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[1] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[1]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[2] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[2]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[3] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[3]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[4] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[4]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[5] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[5]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[6] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[6]).category + '</b>' +
+                            '<br>Press <b style="text-transform: uppercase";>' + possible_keys[7] + '</b> for <b>' +  corr_keys.find(x => x.key === possible_keys[7]).category + '</b>' +
+                        "</p>" + 
+                        '<p> To make it easier, the following reminder will be displayed at the bottom of the screen thoughout the experiment:' +
+                            '<div class="wrapper">' +
+                                '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                                '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                                '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                                '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                                '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                                '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                                '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                                '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                                '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                                '</div>')},
+                        "<p>We will start with some <b>training</b>. Use the training trials to get used to the task and get as accurate as possible.</p>" + 
+                        "<p>During training, you will be provided with feedback about your responses (<b><i>correct</i></b>/<b><i>wrong</i></b>).</p>" +
+                        "<p>Note that this feedback won't be available during the rest of the experiment!</p>" +
+                        "<p>Press <i>'Continue'</i> to proceed to training.</p>"
+            ],
+        button_label_next: "Continue",
+        button_label_previous: "Return",
+        show_clickable_nav: true
+    };
+    timeline.push(instructions)
+////////////////////////////////////////////////////////////////////////////// END OF INSTRUCTIONS
+
+
+
+////////////////////////////////////////////////////////////////////////////// START OF TRAINING
+    var train_count_correct_trial = 0; // counting correct trials to stop training when performance is met
+
+    var train_fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '+',
+        choices: "NO_KEYS",
+        trial_duration: 500,
+        data: 'fixation',
+        post_trial_gap: 0,
+        trial_duration:500
+    };
+
+    // adding a randomly long blank interval before image presentation
+    var train_jitter = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '',
+        choices: "NO_KEYS", //specifies that no keyboard answer will be accepted
+        trial_duration: function(){
+            return jsPsych.randomization.sampleWithoutReplacement([0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300], 1)[0];
+        }, // this function picks up one duration value at random
+        data: 'fixation' // here we tag the fixation with a relevant name, useful to remove its data later
+    };
+
+    var train_image_presentation = {
+        // here I show the image very briefly
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('train_filename'),
+        choices: "NO_KEYS",
+        data: {
+            task: 'training',
+            category: jsPsych.timelineVariable('train_category'),
+            manipulation: jsPsych.timelineVariable('train_manipulation')
+        },
+        // Here the prompt is useless but I insert it to have a similar presentation display
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 300); // set this to 300 so the prompt appears right after the mask
+        },
+        stimulus_duration: 50,
+        trial_duration: 50
+    };
+
+
+    var training_trial = {
+        // here I present the mask and collect the response
+        type: jsPsychImageKeyboardResponse,
+        stimulus: "https://www.psytests.be/timages/white_square.png",
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
+        // choices: [ans_array[0], ans_array[1], ans_array[2], ans_array[3], ans_array[4], ans_array[5], ans_array[6], ans_array[7]],
+        choices: function() {
+            if(jsPsych.data.get().values()[1].response.KeyboardSelection === 'AZERTY'){
+                return ['q', 's', 'd', 'f', 'j', 'k', 'l', 'm'];
+            } else {
+                return ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
+            }
+        },
+        data: {
+            task: 'training',
+            category: jsPsych.timelineVariable('train_category'),
+            manipulation: jsPsych.timelineVariable('train_manipulation')
+        },
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 200);
+        },
+        on_finish: function(data){ //this function calculates online whether the answer is correct or not
+            data.correct_response = corr_keys.find(x => x.category === jsPsych.timelineVariable('train_category')).key;
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            if (jsPsych.data.get().last(1).values()[0].correct) {
+                train_count_correct_trial +=1}
+            else {train_count_correct_trial = 0};
+        },
+        trial_duration: 10000,
+        stimulus_duration: 300
+    };
+
+    var feedback_training_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function(){
+            // The feedback stimulus is a dynamic parameter because we can't know in advance whether
+            // the stimulus should be 'correct' or 'incorrect'.
+            // Instead, this function will check the accuracy of the last response and use that information to set
+            // the stimulus value on each trial.
+            var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+            if(last_trial_correct){
+            return "<p><b><i>Correct!</i></b></p>"; // the parameter value has to be returned from the function
+            } else {
+            return "<p><b><i>Wrong.</i></b></p>"; // the parameter value has to be returned from the function
+            }
+        },
+        trial_duration: 400,
+        on_finish: function(){
+            if (train_count_correct_trial > 8) {jsPsych.endCurrentTimeline()} // switch back to 4!!!
+        },
+        data: {
+            task:'training_feedback'
+        }
+    };
+    
+    var training_procedure = {
+        timeline: [train_fixation, train_jitter, train_image_presentation, training_trial, feedback_training_trial],
+        timeline_variables: train_img_stimuli,  
+        randomize_order: true
+    };
+
+    timeline.push(training_procedure)
+////////////////////////////////////////////////////////////////////////////// END OF TRAINING
+
+
+
+////////////////////////////////////////////////////////////////////////// BEGINNING OF INSTRUCTIONS BETWEEN TRAINING AND MAIN TASK
+    var interim_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            function() {
+                return(
+                    "<p> The training is now over. When you are ready, press <b><i>space</i></b> to start the main task.</p>" +
+                    "<p> The task contains 5 blocks of 80 trials and should take approximately 20 minutes in total. You will be able to take breaks in between blocks.</p>" + 
+                    "<p> <b><i>Good luck!</i></b> </p>" +
+                        '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                            '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                            '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                            '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                            '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                            '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                            '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                            '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                            '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                            '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                        '</div>'
+            )}
+            ],
+        button_label_next: "Start main task",
+        key_forward: ' ',
+        allow_backward: false,
+        show_clickable_nav: false
+    };
+    timeline.push(interim_instructions)
+////////////////////////////////////////////////////////////////////////////// END OF INSTRUCTIONS BETWEEN TRAINING AND MAIN TASK
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// START OF MAIN TASK
+    var trial_count = 0;
+    var block_count = 1; // counting the block number to append in the data
+    var count_correct_trial = 0; // counting correct trials to give feedback during breaks
+
+    var break_trial = {
+        type: jsPsychInstructions,
+        pages: [
+            function(){
+                return(
+                    "<p> You have finished <b>" + trial_count + "</b> trials out of 400.</p>" +
+                    "<p>You accuracy so far is <b>" + Math.ceil((count_correct_trial/trial_count)*100) + " %</b>.</p>" +
+                    "<p>Take a break and press <b><i>space</i></b> when you're ready.</p>"
+                )
+            }
+        ],
+        button_label_next: "Continue",
+        allow_backward: false,
+        show_clickable_nav: true,
+        key_forward: ' ',
+        data: {
+            task: 'break',
+        }
+    };
+
+    var break_conditional = {
+        timeline: [break_trial],
+        conditional_function: function() {
+            // increment trial count - in first run through the timeline variables procedure, trial_count will be equal to 1
+            trial_count++;
+            if (trial_count %  80 == 0) { //enter here the length of blocks
+                // if the trial count is divisible by x, then run the break trial
+                block_count +=1;
+                return true;
+            } else {
+                // otherwise skip the break trial
+                return false;
+            }
+        }
+    };
+
+    var fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '+',
+        choices: "NO_KEYS",
+        trial_duration: 500,
+        data: 'fixation',
+        post_trial_gap: 0,
+        trial_duration:500,
+        data: {
+            task: 'fixation_cross',
+        }
+    };
+
+    // adding a randomly long blank interval before image presentation
+    var jitter = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '',
+        choices: "NO_KEYS", //specifies that no keyboard answer will be accepted
+        trial_duration: function(){
+            return jsPsych.randomization.sampleWithoutReplacement([0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300], 1)[0];
+        }, // this function picks up one duration value at random
+        data: {
+            task:'fixation_jitter' // here we tag the fixation with a relevant name, useful to remove its data later
+         }
+    };
+
+    var image_presentation = {
+        // here I show the image very briefly
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('filename'),
+        choices: "NO_KEYS",
+        data: {
+            task: 'main_task',
+            category: jsPsych.timelineVariable('category'),
+            manipulation: jsPsych.timelineVariable('manipulation')
+        },
+        // Here the prompt is useless but I insert it to have a similar presentation display
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 300); // set this to 300 so the prompt never appears during image presentation
+        },
+        stimulus_duration: 50,
+        trial_duration: 50
+    };
+
+    var classification_trial = {
+        // here I mask and allow for responses
+        type: jsPsychImageKeyboardResponse,
+        stimulus: "white_square.png",
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' + 
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
+        // choices: [ans_array[0], ans_array[1], ans_array[2], ans_array[3], ans_array[4], ans_array[5], ans_array[6], ans_array[7]],
+        choices: function() {
+            if(jsPsych.data.get().values()[1].response.KeyboardSelection === 'AZERTY'){
+                return ['q', 's', 'd', 'f', 'j', 'k', 'l', 'm'];
+            } else {
+                return ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
+            }
+        },
+        data: {
+            task: 'main_task',
+            category: jsPsych.timelineVariable('category'),
+            manipulation: jsPsych.timelineVariable('manipulation')
+        },
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 300); // set this to 300 so the prompt appears right after the mask
+        },
+        on_finish: function(data){ //this function calculates online whether the answer is correct or not
+            // data.correct_response = corr_keys[jsPsych.timelineVariable('category')];
+            data.correct_response = corr_keys.find(x => x.category === jsPsych.timelineVariable('category')).key;
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            data.block_number = block_count;
+            if (jsPsych.data.get().last(1).values()[0].correct) {
+                count_correct_trial +=1};
+        },
+        trial_duration: 10000,
+        stimulus_duration: 300
+    };
+    
+    var main_task_procedure = {
+        timeline: [break_conditional, fixation, jitter, image_presentation, classification_trial],
+        timeline_variables: img_stimuli,
+        randomize_order: true,
+        repetitions: 1
+    };
+
+    timeline.push(main_task_procedure)
+
+    var end_message = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+        <p> Thank you for taking part, the experiment is now over!</p>
+        <p> Press any key to finish.</p>
+        `,
+        post_trial_gap: 500,
+        data: {
+            task: 'end_message'
+        }
+    };
+    timeline.push(end_message);
+
+
+    jsPsych.run(timeline);
+
+    </script>
+    </html>

@@ -284,9 +284,55 @@
         data: 'fixation' // here we tag the fixation with a relevant name, useful to remove its data later
     };
 
-    var training_trial = {
+    var train_image_presentation = {
+        // here I show the image very briefly
         type: jsPsychImageKeyboardResponse,
         stimulus: jsPsych.timelineVariable('train_filename'),
+        choices: "NO_KEYS",
+        data: {
+            task: 'training',
+            category: jsPsych.timelineVariable('train_category'),
+            manipulation: jsPsych.timelineVariable('train_manipulation')
+        },
+        // Here the prompt is useless but I insert it to have a similar presentation display
+        prompt: function() {
+            return(
+                // the class is for creating a nice 2x8 table layout with images and keys
+                // the ID is to hide the prompt at the start of trials
+                '<div class="wrapper" id="prompt" style="visibility:hidden;">' +
+                    '<div grid-area: 1><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[0]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 2><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[1]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 3><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[2]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 4><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[3]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 5><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[4]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 6><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[5]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 7><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[6]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 8><img src="https://www.psytests.be/timages/instructions_img/model_' + corr_keys.find(x => x.key === possible_keys[7]).category + '.png" height="100"></div>' +
+                    '<div grid-area: 9;>' + possible_keys[0] + '</div>' +
+                    '<div grid-area: 10;>' + possible_keys[1] + '</div>' +
+                    '<div grid-area: 11;>' + possible_keys[2] + '</div>' +
+                    '<div grid-area: 12;>' + possible_keys[3] + '</div>' +
+                    '<div grid-area: 13;>' + possible_keys[4] + '</div>' +
+                    '<div grid-area: 14;>' + possible_keys[5] + '</div>' +
+                    '<div grid-area: 15;>' + possible_keys[6] + '</div>' +
+                    '<div grid-area: 16;>' + possible_keys[7] + '</div>' +
+                '</div>'
+            )},
+        on_load: function() {
+            // wait for some time before showing the prompt
+            setTimeout(function() {
+            document.getElementById('prompt').style.visibility = "visible";
+            }, 300); // set this to 300 so the prompt appears right after the mask
+        },
+        stimulus_duration: 50,
+        trial_duration: 50
+    };
+
+
+    var training_trial = {
+        // here I present the mask and collect the response
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('train_mask_filename'),
         prompt: function() {
             return(
                 // the class is for creating a nice 2x8 table layout with images and keys
@@ -337,7 +383,7 @@
             else {train_count_correct_trial = 0};
         },
         trial_duration: 10000,
-        stimulus_duration: 150
+        stimulus_duration: 300
     };
 
     var feedback_training_trial = {
@@ -364,12 +410,12 @@
     };
     
     var training_procedure = {
-        timeline: [train_fixation, train_jitter, training_trial, feedback_training_trial],
+        timeline: [train_fixation, train_jitter, train_image_presentation, training_trial, feedback_training_trial],
         timeline_variables: train_img_stimuli,  
         randomize_order: true
     };
 
-    // timeline.push(training_procedure)
+    timeline.push(training_procedure)
 ////////////////////////////////////////////////////////////////////////////// END OF TRAINING
 
 
@@ -417,6 +463,7 @@
 ////////////////////////////////////////////////////////////////////////////// START OF MAIN TASK
     var trial_count = 0;
     var block_count = 1; // counting the block number to append in the data
+    var count_correct_trial = 0; // counting correct trials to give feedback during breaks
 
     var break_trial = {
         type: jsPsychInstructions,
@@ -424,6 +471,7 @@
             function(){
                 return(
                     "<p> You have finished <b>" + trial_count + "</b> trials out of 400.</p>" +
+                    "<p>You accuracy so far is <b>" + Math.ceil((count_correct_trial/trial_count)*100) + " %</b>.</p>" +
                     "<p>Take a break and press <b><i>space</i></b> when you're ready.</p>"
                 )
             }
@@ -517,7 +565,7 @@
             // wait for some time before showing the prompt
             setTimeout(function() {
             document.getElementById('prompt').style.visibility = "visible";
-            }, 300); // set this to 300 so the prompt appears right after the mask
+            }, 300); // set this to 300 so the prompt never appears during image presentation
         },
         stimulus_duration: 50,
         trial_duration: 50
@@ -574,6 +622,8 @@
             data.correct_response = corr_keys.find(x => x.category === jsPsych.timelineVariable('category')).key;
             data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
             data.block_number = block_count;
+            if (jsPsych.data.get().last(1).values()[0].correct) {
+                count_correct_trial +=1};
         },
         trial_duration: 10000,
         stimulus_duration: 300
