@@ -7,6 +7,8 @@
 # to be applied for each image.
 #
 # This script does the same with images in 'train_img'.
+#
+# This script also creates a 'mask_img_stimuli.js' file that adds 80 control stimuli
 ####################
 import pathlib
 import glob
@@ -32,6 +34,13 @@ def csv_to_json(csvFilePath, jsonFilePath):
         jsonString = json.dumps(jsonArray, indent=4)
         jsonf.write(jsonString)
 
+
+
+
+###################################################
+# creating the main task json file
+###################################################
+
 files = glob.glob('./online_version_mask/task_img/*.png')
 mask_files = glob.glob('./online_version_mask/mask_img/*.png')
 
@@ -52,7 +61,7 @@ for i in range(len(files)):
     mask_file = pathlib.Path(mask_files[i])
     mask_filenames.append("https://www.psytests.be/timages/" + str(mask_file.parts[-2]) + '/' + mask_file.name)
 
-    # adding the category and correct response
+    # adding the category
     if 'person' in str(file.name):
         category.append('person')
         # correct_response.append('l')
@@ -106,6 +115,74 @@ csv_to_json('./online_version_mask/img_stimuli.csv', './online_version_mask/img_
 # Once the img_stimuli.js file is created, remember to add 'var img_stimuli = ' on the first line, so JsPsych can read it.
 ####################################
 
+
+###################################################
+# creating the mask_img_stimuli json file
+###################################################
+
+# take the main task json file and amend an extra 80 control trials
+# these don't have a mask
+
+
+control_filenames = []
+for i in range(len(files)):
+    file = pathlib.Path(files[i])
+    # check if it is a control image
+    if ('control' in str(file.name)):
+        
+        # if it is, run the same listing as above: for the file name
+        filenames.append("https://www.psytests.be/timages/" + str(file.parts[-2]) + '/' + file.name)
+        # and for the category and manipulation
+        if 'person' in str(file.name):
+            category.append('person')
+            # correct_response.append('l')
+        elif 'cat' in str(file.name):
+            category.append('cat')
+            # correct_response.append('j')
+        elif 'bird' in str(file.name):
+            category.append('bird')
+            # correct_response.append('d')
+        elif 'banana' in str(file.name):
+            category.append('banana')
+            # correct_response.append('q')
+        elif 'firehydrant' in str(file.name):
+            category.append('firehydrant')
+            # correct_response.append('s')
+        elif 'bus' in str(file.name):
+            category.append('bus')
+            # correct_response.append('k')
+        elif 'building' in str(file.name):
+            category.append('building')
+            # correct_response.append('f')
+        elif 'tree' in str(file.name):
+            category.append('tree')
+            # correct_response.append('m')
+        
+        # adding the manipulation
+        if 'blob' in str(file.name):
+            manipulation.append('occlusion')
+        elif 'control' in str(file.name):
+            manipulation.append('control')
+        elif 'clutter' in str(file.name):
+            manipulation.append('clutter')
+        elif 'lp' in str(file.name):
+            manipulation.append('low-pass')
+        elif 'hp' in str(file.name):
+            manipulation.append('high-pass')
+
+        # and for these files, add a white mask
+        mask_filenames.append("https://www.psytests.be/timages/white_square.png")
+
+# now create the corresponding file
+mask_dict = {"filename": filenames, "mask_filename": mask_filenames, "category": category, "manipulation": manipulation}
+# transforming it to a dataframe
+mask_df = pd.DataFrame(mask_dict)
+mask_df.to_csv('./online_version_mask/mask_img_stimuli.csv')
+csv_to_json('./online_version_mask/mask_img_stimuli.csv', './online_version_mask/mask_img_stimuli.js')
+
+###################################################
+# creating the training json file
+###################################################
 
 train_files = glob.glob('./online_version_mask/train_img/*.png')
 train_mask_files = glob.glob('./online_version_mask/train_mask_img/*.png')

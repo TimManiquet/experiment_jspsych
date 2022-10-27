@@ -3,7 +3,7 @@
   <head>
     <title>My experiment</title>
     <script src="jspsych/jspsych.js"></script>
-    <script src="img_stimuli.js"></script>
+    <script src="mask_img_stimuli.js"></script>
     <script src="train_img_stimuli.js"></script>
     <script src="shuffle_array.js"></script>  <!-- add the function that will shuffle correct answer-->
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
@@ -71,9 +71,9 @@
     var list_of_filenames = []
 
     // append file names from the main task
-    for (let i = 0; i < img_stimuli.length; i++) {
-        list_of_filenames.push(img_stimuli[i].filename)
-        list_of_filenames.push(img_stimuli[i].mask_filename)
+    for (let i = 0; i < mask_img_stimuli.length; i++) {
+        list_of_filenames.push(mask_img_stimuli[i].filename)
+        list_of_filenames.push(mask_img_stimuli[i].mask_filename)
     }
     // append file names from the training
     for (let i = 0; i < train_img_stimuli.length; i++) {
@@ -631,7 +631,7 @@
     
     var main_task_procedure = {
         timeline: [break_conditional, fixation, jitter, image_presentation, classification_trial],
-        timeline_variables: img_stimuli,
+        timeline_variables: mask_img_stimuli,
         randomize_order: true,
         repetitions: 1
     };

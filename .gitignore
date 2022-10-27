@@ -19,5 +19,3 @@ bin/*
 online_version/*
 online_version_mask/img_stimuli.csv
 online_version_mask/train_img_stimuli.csv
-online_version_mask/jspsych
-online_version_mask/style.css
